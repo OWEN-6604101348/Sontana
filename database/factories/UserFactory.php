@@ -29,6 +29,8 @@ class UserFactory extends Factory
             // ชื่อผู้ใช้ (สุ่มจาก fake)
             'name' => fake()->name(),
 
+            'role' => $this->faker->randomElement(['admin', 'moderator', 'user']),
+            
             // อีเมล (สุ่มและตรวจสอบให้ไม่ซ้ำ)
             'email' => fake()->unique()->safeEmail(),
 

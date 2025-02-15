@@ -7,7 +7,14 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
-    public function store(Request $request)
+    public function index()
+    {
+        // ดึงข้อมูล   โพสต์ทั้งหมดจากฐานข้อมูล
+        $posts = Post::all();
+
+        // ส่งข้อมูลกลับในรูปแบบ JSON
+        return response()->json($posts);
+    }public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string|max:255',

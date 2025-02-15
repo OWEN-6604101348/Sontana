@@ -1,7 +1,10 @@
 <?php
 
 namespace Database\Seeders;
-
+use Database\Factories\CategoryFactory; // เพิ่มบรรทัดนี้
+use App\Models\Category;  // เพิ่มบรรทัดนี้ ถ้าหากยังไม่มี
+use Database\Factories\PostsFactory; // เพิ่มบรรทัดนี้
+use App\Models\Post;
 use App\Models\User; // ใช้โมเดล User เพื่อเข้าถึงและสร้างข้อมูลผู้ใช้
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents; // ใช้สำหรับปิดการจับเหตุการณ์โมเดล (ไม่จำเป็นในที่นี้)
 use Illuminate\Database\Seeder; // ใช้สำหรับสร้าง class Seeder ใน Laravel

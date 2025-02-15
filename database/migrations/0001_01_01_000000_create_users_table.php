@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('email')->unique(); // คอลัมน์เก็บอีเมลที่ไม่ซ้ำ
             $table->timestamp('email_verified_at')->nullable(); // คอลัมน์เวลาการยืนยันอีเมล (อาจเป็น NULL)
             $table->string('password'); // คอลัมน์เก็บรหัสผ่านที่แฮชแล้ว
+            $table->enum('role', ['admin', 'moderator', 'user'])->default('user');
             $table->rememberToken(); // คอลัมน์สำหรับ token ในการจำการเข้าสู่ระบบ (Remember Me)
             $table->timestamps(); // คอลัมน์ `created_at` และ `updated_at` โดยอัตโนมัติ
         });

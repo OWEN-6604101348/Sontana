@@ -1,10 +1,8 @@
 <?php
-use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 // นำเข้าคอนโทรลเลอร์ที่ใช้ในเส้นทางต่าง ๆ
-use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
 // นำเข้าคลาสที่ใช้สำหรับแอปพลิเคชัน
 use Illuminate\Foundation\Application;
@@ -13,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 // นำเข้า Inertia สำหรับการเรนเดอร์หน้าเว็บ
 use Inertia\Inertia;
 
-
+Route::get('/posts', [PostController::class, 'index']);
 
 
 // เส้นทางหลักของเว็บไซต์ที่แสดงหน้าต้อนรับ
