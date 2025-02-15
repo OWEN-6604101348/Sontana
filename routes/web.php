@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Route;
 // นำเข้า Inertia สำหรับการเรนเดอร์หน้าเว็บ
 use Inertia\Inertia;
 
-Route::get('/posts', [PostController::class, 'index']);
 
 
 // เส้นทางหลักของเว็บไซต์ที่แสดงหน้าต้อนรับ
