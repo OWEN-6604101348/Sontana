@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamps(); // คอลัมน์ `created_at` และ `updated_at` โดยอัตโนมัติ
         });
 
+        
         // สร้างตาราง `password_reset_tokens` เพื่อเก็บข้อมูลการตั้งรหัสผ่านใหม่
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary(); // คอลัมน์อีเมลเป็น primary key
