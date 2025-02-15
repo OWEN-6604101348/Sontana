@@ -14,15 +14,13 @@ class User extends Authenticatable
      // กำหนดความสัมพันธ์ว่า User มีหลาย Chirps
      // หมายความว่า ผู้ใช้แต่ละคนสามารถสร้าง Chirp ได้หลายรายการ
 
-    public function chirps(): HasMany
-    {
-        // ใช้ hasMany เพื่อบอกว่า User มีความสัมพันธ์กับ Chirp แบบ "หนึ่งต่อหลาย"
-        return $this->hasMany(Chirp::class);
-    }
+
 
     /* @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable; // ใช้ Traits สำหรับเพิ่มความสามารถพิเศษ เช่น การสร้างข้อมูลทดสอบ และการแจ้งเตือน
 
+
+    
     /**
      * 
      * 
@@ -33,8 +31,10 @@ class User extends Authenticatable
         'name',             //ป้องกันการโจมตีแบบ Mass Assignment โดยอนุญาตให้ฟิลด์ name, email, และ password สามารถบันทึกได้
         'email',
         'password',
+        'role'
     ];
 
+    
     /**
      * 
      * 
@@ -59,4 +59,24 @@ class User extends Authenticatable
             'password' => 'hashed', // แปลงฟิลด์ password ให้เก็บข้อมูลในรูปแบบ hashed
         ];
     }
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'reporter_id');
+    }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class);
+    }
 }
+
