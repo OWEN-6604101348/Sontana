@@ -35,10 +35,14 @@ class PostController extends Controller
     
 
     public function show($id)
-    {
-        $post = Post::with('comments.user', 'category', 'likes')->findOrFail($id);
-        return response()->json($post);
-    }
+{
+    $post = Post::with('comments.user', 'category', 'likes')
+                ->withCount('likes') // นับจำนวนไลก์
+                ->findOrFail($id);
+
+    return response()->json($post);
+}
+
 
     public function update(Request $request, $id)
     {
