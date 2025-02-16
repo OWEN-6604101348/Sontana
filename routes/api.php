@@ -6,10 +6,18 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\AuthController; // Ensure AuthController exists in this namespace
 
 // Route สำหรับโพสต์
-Route::get('/posts', [PostController::class, 'index']);
 
-// Route สำหรับ Authentication
+
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::middleware('auth:sanctum')->get('/user', [AuthController::class, 'user']);
-Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+
+// ครอบทุก API ที่ต้องการ Auth ด้วย Middleware
+Route::middleware('auth:sanctum')->group(function () {
+    /*Route::get('/posts', [PostController::class, 'index']);
+    Route::post('/posts', [PostController::class, 'store']);
+    Route::get('/posts/{id}', [PostController::class, 'show']);
+    Route::put('/posts/{id}', [PostController::class, 'update']); 
+    Route::delete('/posts/{id}', [PostController::class, 'destroy']); **/
+    Route::apiResource('posts', PostController::class);
+});
+
