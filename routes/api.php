@@ -20,5 +20,6 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Routes สำหรับไลก์โพสต์
     Route::post('/posts/{id}/likes', [LikeController::class, 'store']);
+    
 });
 
