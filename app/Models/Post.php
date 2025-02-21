@@ -1,13 +1,32 @@
 <?php
 
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Post extends Model
 {
     use HasFactory;
-    protected $fillable = ['user_id', 'title', 'content', 'category_id', 'views', 'status'];
+
+    protected $fillable = [
+        'user_id',
+        'title',
+        'content',
+        'category_id',
+        'image', // ✅ เพิ่ม image ใน fillable
+        'views',
+        'status',
+    ];
+
+    /**
+     * ✅ Accessor สำหรับเรียก URL ของรูปภาพ
+     */
+    public function getImageUrlAttribute()
+    {
+        return $this->image ? Storage::url($this->image) : asset('default-image.jpg');
+    }
 
     public function user()
     {
@@ -39,4 +58,3 @@ class Post extends Model
         return $this->hasMany(Report::class);
     }
 }
-

@@ -9,7 +9,11 @@ use Illuminate\Foundation\Application;
 // นำเข้าคลาสที่ใช้สำหรับกำหนดเส้นทาง
 use Illuminate\Support\Facades\Route;
 // นำเข้า Inertia สำหรับการเรนเดอร์หน้าเว็บ
+use App\Http\Controllers\AuthController; // Ensure AuthController exists in this namespace
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 use Inertia\Inertia;
+use App\Models\Post;
 
 
 
@@ -39,13 +43,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::get('/posts', function () {
-//     return Inertia::render('Post/Index');
-// });
+Route::middleware('auth')->group(function () {
+    Route::get('/sontana/posts', [PostController::class, 'index'])->name('post.index');
+    Route::get('/sontana/create', [PostController::class, 'create'])->name('post.create');
+    Route::post('/sontana/posts', [PostController::class, 'store'])->name('post.store');
+    Route::get('/sontana/posts/{id}/edit', [PostController::class, 'edit'])->name('post.edit');
+    Route::put('/sontana/posts/{id}', [PostController::class, 'update'])->name('post.update');
+    Route::delete('/sontana/posts/{id}', [PostController::class, 'destroy'])->name('post.destroy');
+});
 
-Route::get('/posts', [PostController::class, 'index'])->name('post.index');
 
-// กลุ่มเส้นทางสำหรับการจัดการ Chirp โดยใช้ resource controller
-//Route::get('/posts', [PostController::class, 'index']);
-// รวมเส้นทางที่เกี่ยวข้องกับการเข้าสู่ระบบและการยืนยันอีเมล
 require __DIR__.'/auth.php';

@@ -1,22 +1,35 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Inertia\Inertia;
-use App\Models\Post;
 use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Models\Category;
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
     public function index()
     {
-        // ดึงข้อมูลโพสต์ทั้งหมดพร้อมกับข้อมูลที่เกี่ยวข้อง (user, category, comments, likes, ฯลฯ)
-        $posts = Post::with(['user', 'category', 'comments', 'likes', 'attachments', 'reports'])->get();
+        $posts = Post::with(['user', 'category', 'comments', 'likes', 'attachments'])->get();
+        $categories = Category::all();
 
-        // ส่งข้อมูลไปยัง React ผ่าน Inertia
-        return Inertia::render('Posts/Index', [
+        return Inertia::render('Sontana/Posts/Index', [
             'posts' => $posts,
+            'categories' => $categories
         ]);
     }
+
+    public function create()
+    {
+        $categories = Category::all(); // ดึงหมวดหมู่จากฐานข้อมูล
+    
+        return Inertia::render('Sontana/Posts/create', [
+            'categories' => $categories
+        ]);
+    }
+    
 
     public function store(Request $request)
     {
@@ -24,64 +37,87 @@ class PostController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'category_id' => 'required|exists:categories,id',
-            'status' => 'nullable|string|in:active,draft,deleted',
+            'image' => 'nullable|image|max:2048', // ✅ ตรวจสอบไฟล์รูปภาพ
         ]);
-    
-        $post = Post::create([
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('uploads', 'public'); // ✅ บันทึกภาพ
+        }
+
+        Post::create([
             'user_id' => auth()->id(),
             'title' => $request->title,
             'content' => $request->content,
             'category_id' => $request->category_id,
-            'status' => $request->status ?? 'active',
+            'image' => $imagePath,
+            'status' => 'active',
         ]);
-    
-        return response()->json(['message' => 'Post created!', 'post' => $post]);
+
+        return redirect()->route('post.index')->with('success', 'Post created!');
     }
-    
 
-    public function show($id)
-{
-    $post = Post::with('comments.user', 'category', 'likes')
-                ->withCount('likes') // นับจำนวนไลก์
-                ->findOrFail($id);
+    public function edit($id)
+    {
+        $post = Post::findOrFail($id);
 
-    return response()->json($post);
-}
+        if ($post->user_id !== auth()->id()) {
+            abort(403);
+        }
 
+        return Inertia::render('Sontana/Posts/Edit', [
+            'post' => $post,
+        ]);
+    }
 
     public function update(Request $request, $id)
     {
         $post = Post::findOrFail($id);
 
-        // ตรวจสอบว่า user ที่ล็อกอิน เป็นเจ้าของโพสต์หรือไม่
         if ($post->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            abort(403);
         }
 
         $request->validate([
-            'title' => 'sometimes|string|max:255',
-            'content' => 'sometimes|string',
-            'category_id' => 'sometimes|exists:categories,id',
-            'views' => 'sometimes|integer|min:0',
-            'status' => 'sometimes|string|in:active,draft,deleted',
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'image' => 'nullable|image|max:2048', // ✅ อัปโหลดรูปใหม่ (ถ้ามี)
         ]);
 
-        $post->update($request->only(['title', 'content', 'category_id', 'views', 'status']));
+        // ✅ ลบรูปเก่าถ้ามีการอัปโหลดรูปใหม่
+        if ($request->hasFile('image')) {
+            if ($post->image) {
+                Storage::disk('public')->delete($post->image);
+            }
+            $post->image = $request->file('image')->store('uploads', 'public');
+        }
 
-        return response()->json(['message' => 'Post updated!', 'post' => $post]);
+        $post->update([
+            'title' => $request->title,
+            'content' => $request->content,
+            'category_id' => $request->category_id,
+            'image' => $post->image, // ✅ เก็บค่ารูปใหม่ (ถ้ามี)
+        ]);
+
+        return redirect()->route('post.index')->with('success', 'Post updated!');
     }
 
     public function destroy($id)
     {
         $post = Post::findOrFail($id);
 
-        // ตรวจสอบว่าเป็นเจ้าของโพสต์หรือไม่
         if ($post->user_id !== auth()->id()) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            abort(403);
+        }
+
+        // ✅ ลบรูปภาพจาก Storage ก่อนลบโพสต์
+        if ($post->image) {
+            Storage::disk('public')->delete($post->image);
         }
 
         $post->delete();
 
-        return response()->json(['message' => 'Post deleted successfully']);
+        return redirect()->route('post.index')->with('success', 'Post deleted!');
     }
 }

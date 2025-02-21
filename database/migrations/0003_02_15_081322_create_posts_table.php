@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('content');
             $table->foreignId('category_id')->constrained('categories');
+            $table->string('image')->nullable();
             $table->integer('views')->default(0);
             $table->enum('status', ['active', 'locked', 'deleted']);
             $table->timestamps();
