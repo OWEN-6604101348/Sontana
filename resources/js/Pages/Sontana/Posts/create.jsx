@@ -13,6 +13,7 @@ export default function Create({ categories }) {
         setData(e.target.name, e.target.value);
     };
 
+    
     const handleFileChange = (e) => {
         setData("image", e.target.files[0]);
     };
