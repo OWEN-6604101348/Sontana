@@ -116,6 +116,7 @@ export default function Edit({ post, categories }) {
                         {errors.image && <p className="text-red-500 text-sm mt-1">{errors.image}</p>}
                     </div>
 
+
                     <button
                         type="submit"
                         disabled={processing}
