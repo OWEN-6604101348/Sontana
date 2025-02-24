@@ -47,6 +47,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/posts/{id}/comment', [CommentController::class, 'store'])->name('comment.store');
     Route::get('/sontana/posts/{id}/view', [PostController::class, 'incrementView'])
     ->name('post.incrementView');
+
+    Route::post('/posts/{id}/like', [LikeController::class, 'store'])->name('like.store');
+    Route::post('/posts/{id}/like/remove', [LikeController::class, 'remove'])->name('like.remove');
     
 });
 

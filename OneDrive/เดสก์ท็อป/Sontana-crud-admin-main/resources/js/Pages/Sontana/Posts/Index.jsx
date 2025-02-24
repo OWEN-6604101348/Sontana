@@ -56,7 +56,7 @@ export default function PostIndex() {
                                     </h2>
                                     <p className="italic text-gray-600">
                                         <strong>Category:</strong> {post.category.name}
-                                       </p>
+                                    </p>
                                     <p className="text-gray-700 leading-relaxed mb-4">
                                         {post.content}
                                     </p>
@@ -64,6 +64,9 @@ export default function PostIndex() {
                                         <strong>Author:</strong> {post.user.name}
                                     </p>
                                     <p className="text-gray-500">View : {post.views} </p>
+                                    {/* แสดงยอด Like */}
+                                    <span className="text-gray-500">Likes: {post.likes.length}</span>
+
                                 </Link>
                             ))
                         ) : (

@@ -7,7 +7,7 @@ export default function PostDetail() {
     const { post, auth, categories } = usePage().props;
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState(post.comments || []);
-
+    const [liked, setLiked] = useState(post.likes.some(like => like.user_id === auth.user.id));  // กำหนดค่าเริ่มต้นที่ถูกต้อง
     useEffect(() => {
         console.log("Post Data:", post); // ✅ ตรวจสอบว่า content ถูกส่งมาหรือไม่
     }, [post]);
@@ -32,7 +32,19 @@ export default function PostDetail() {
             }
         );
     };
-
+    const handleLike = () => {
+        if (liked) {
+            // ยกเลิกการไลก์
+            router.post(route('like.remove', post.id), {}, {
+                onSuccess: () => setLiked(false)
+            });
+        } else {
+            // กดไลก์
+            router.post(route('like.store', post.id), {}, {
+                onSuccess: () => setLiked(true)
+            });
+        }
+    };
     return (
         <AuthenticatedLayout>
             <div className="p-5 font-sans bg-gray-100 min-h-screen">
@@ -53,6 +65,20 @@ export default function PostDetail() {
                         {post.content}
                     </div>
 
+                    {/* แสดงยอด Like */}
+                    <div className="mt-4">
+                        <span className="text-gray-500">Likes: {post.likes.length}</span>
+                    </div>
+
+                    {/* ปุ่ม Like */}
+                    {auth.user && (
+                        <button
+                            onClick={handleLike}
+                            className={`mt-6 px-4 py-2 rounded-lg ${liked ? 'bg-blue-500' : 'bg-gray-500'} text-white`}
+                        >
+                            {liked ? 'Unlike' : 'Like'}
+                        </button>
+                    )}
                     {auth.user &&
                         (auth.user.id === post.user_id ||
                             auth.user.role === "admin") && (

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -32,5 +33,22 @@ class LikeController extends Controller
         ]);
 
         return redirect()->back()->with('message', 'Liked post');
+    }
+
+    public function remove($id)
+    {
+        $user = auth()->user();
+        $post = Post::findOrFail($id);
+
+        // ค้นหา Like ที่เกี่ยวข้องกับโพสต์และผู้ใช้
+        $like = Like::where('post_id', $post->id)
+                    ->where('user_id', $user->id)
+                    ->first();
+
+        if ($like) {
+            $like->delete();
+        }
+
+        return redirect()->back();
     }
 }
